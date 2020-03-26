@@ -1,0 +1,49 @@
+<%- include('header') %>
+<h1 id="dataq"></h1>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-firestore.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-analytics.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyDPtiVV3i2g72pxlmJO30barcRF3PsyWxE",
+        authDomain: "nodejs-262923.firebaseapp.com",
+        databaseURL: "https://nodejs-262923.firebaseio.com",
+        projectId: "nodejs-262923",
+        storageBucket: "nodejs-262923.appspot.com",
+        messagingSenderId: "367840627109",
+        appId: "1:367840627109:web:96e992a5e9c7e84bfe804c",
+        measurementId: "G-HNCMJTCED8"
+    };
+    // Initialize Firebase
+    
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore().collection("users");
+    firebase.analytics();
+
+</script>
+
+<script>
+    const outputHeader = document.querySelector("#dataq");
+    //const docRef =db.doc("users");
+    db.onSnapshot(function(docSnapShot){
+        outputHeader.innerHTML = "";
+        docSnapShot.forEach(function(doc){
+            todo = doc.data();
+            todo.id = doc.id;
+
+            outputHeader.innerHTML = todo;
+        })
+    })
+
+</script>
+
+
+
+<%- include('footer') %>

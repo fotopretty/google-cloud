@@ -1,0 +1,12 @@
+<%- include('header') %>
+
+<% todos.forEach(items =>{ %>
+<div class="container">
+    <h1 class="text-center">Name: <%= items.first %></h1>
+    <h2 class="text-center">SurName: <%= items.last %></h2>
+    <h3 class="text-center">Email: <%= items.email %></h3>
+</div>
+<% }); %>
+
+
+<%- include('footer') %>

@@ -1,0 +1,247 @@
+<%- include('header') %>
+
+
+<div class="container">
+    <p id="testemail"></p>
+    <h1 class="text-center alert alert-primary" id="statusRegist">ลงทะเบียนลูกค้า ทดสอบ</h1>
+
+    <form class="mt-3" id="registform" name="form-regist" method="POST" action="/registersave">
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">ชื่อ First Name</label>
+                <input class="form-control" type="text" id="fname" name="fname" placeholder="ชื่อ">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">นามสกุล Last Name</label>
+                <input class="form-control" type="text" id="lname" name="lname" placeholder="นามสกุล">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">E-mail</label>
+                <input class="form-control" type="email" name="email" id="email" placeholder="อีเมล์"
+                    data-msg-required="กรุณาใส่ email ของคุณ" data-msg-email="ใส่ email ให้ถูกรูปแบบ">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">มือถือ Mobile Number</label>
+                <input class="form-control" type="text" name="mobileno" id="mobileno" placeholder="เบอร์มือถือ">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">อำเภอ Amphur</label>
+                <input name="amphur" class="form-control" type="text" placeholder="อำเภอ">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">จังหวัด Province</label>
+                <input name="province" class="form-control" type="text" placeholder="จังหวัด">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">ตำบล / แขวง District</label>
+                <input name="district" class="form-control" type="text" placeholder="ตำบล / แขวง">
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <div class="col-7 mx-auto">
+                <label for="">รหัสไปรษณีย์</label>
+                <input name="postcode" class="form-control" type="text" placeholder="รหัสไปรษณีย์">
+            </div>
+        </div>
+
+        <div class="form-group row mb-5">
+            <div class="col-7 mx-auto">
+                <input type="hidden" id="emailtoken" name="IdToken" value="">
+                <input type="hidden" id="usertoken" name="UserInfo" value="">
+                <input type="hidden" id="idtoken" name="UserId" value="">
+                <input type="hidden" id="picture" name="pictureUrl" value="">
+                <button type="submit" class="btn btn-primary btn-block mx-auto">ยืนยัน</button>
+            </div>
+        </div>
+    </form>
+    <a href="line://app/1653797799-Ndyny6ek"><img src="/image/eyeone-bottom.png" class="img-fluid"
+            alt="smart home camera"></a>
+
+    <!--     <img id="pictureUrl" width="25%">
+    <p id="userId"></p>
+    <p id="displayName"></p>
+    <p id="statusMessage"></p>
+    <p id="getDecodedIDToken"></p> -->
+</div>
+
+<br><br><br>
+
+
+
+<!-- dependencies for zip mode -->
+<script type="text/javascript" src="/javascript/dependencies/zip.js/zip.js"></script>
+<!-- / dependencies for zip mode -->
+
+<script type="text/javascript" src="/javascript/dependencies/JQL.min.js"></script>
+<script type="text/javascript" src="/javascript/dependencies/typeahead.bundle.js"></script>
+
+<script type="text/javascript" src="/javascript/dist/jquery.Thailand.min.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyDPtiVV3i2g72pxlmJO30barcRF3PsyWxE",
+        authDomain: "nodejs-262923.firebaseapp.com",
+        databaseURL: "https://nodejs-262923.firebaseio.com",
+        projectId: "nodejs-262923",
+        storageBucket: "nodejs-262923.appspot.com",
+        messagingSenderId: "367840627109",
+        appId: "1:367840627109:web:96e992a5e9c7e84bfe804c",
+        measurementId: "G-HNCMJTCED8"
+    };
+    // Initialize Firebase
+
+    firebase.initializeApp(firebaseConfig);
+    //firebase.analytics();
+    var dbRef = firebase.firestore();
+
+</script>
+
+<script>
+    const profileuserId = "";
+    function runApp() {
+        liff.getProfile().then(profile => {
+            /*             document.getElementById("pictureUrl").src = profile.pictureUrl;
+                        document.getElementById("userId").innerHTML = '<b>UserId:</b> ' + profile.userId;
+                        document.getElementById("displayName").innerHTML = '<b>DisplayName:</b> ' + profile.displayName;
+                        document.getElementById("statusMessage").innerHTML = '<b>StatusMessage:</b> ' + profile.statusMessage;
+                        document.getElementById("getDecodedIDToken").innerHTML = '<b>Decoded IDToken:</b> ' + liff.getDecodedIDToken().email; */
+            $('#emailtoken').val(liff.getDecodedIDToken().email);
+            $('#usertoken').val(profile.displayName);
+            $('#idtoken').val(profile.userId);
+            $('#picture').val(profile.pictureUrl);
+            //document.getElementById("userId").innerHTML = '<b>UserId:</b> ' + profile.userId;
+
+            const docRef = dbRef.collection('users');
+            var tempSnapshot = [];
+            //            document.getElementById("testemail").innerHTML = profile.userId;
+            var query = docRef.where("id", "==", profile.userId);
+            query.get()
+                .then(function (arraySnap) {
+                    arraySnap.forEach(function (doc) {
+                        if (doc.exists) {
+                            //                            console.log(doc.id, "=> ", doc.data());
+                            tempSnapshot.push(doc.data());
+                            document.getElementById("statusRegist").innerHTML = "คุณได้ทำการลงทะเบียนแล้วค่ะ";
+                        }
+
+                    });
+
+                }).catch(function (error) {
+                    console.log("Got an error: ", error);
+                });
+
+        }).catch(err => console.error(err));
+
+    }
+
+    liff.init({ liffId: "1653797799-3lNGNyn4" }, () => {
+        if (liff.isInClient()) {
+            runApp()
+        } else {
+            if (liff.isLoggedIn()) {
+                runApp()
+            } else {
+                liff.login();
+            }
+        }
+    }, err => console.error(err.code, error.message));
+
+</script>
+<script>
+
+    $.Thailand({
+        database: '/javascript/database/db.json',
+        $district: $('#registform [name="district"]'),
+        $amphoe: $('#registform [name="amphur"]'),
+        $province: $('#registform [name="province"]'),
+        $zipcode: $('#registform [name="postcode"]'),
+
+        onDataFill: function (data) {
+            console.info('Data Filled', data);
+        },
+        /* 
+                onLoad: function () {
+                    console.info('Autocomplete is ready!');
+                    $('#loader, .demo').toggle();
+                } */
+    });
+
+    // watch on change
+
+    $('#registform [name="district"]').change(function () {
+        console.log('ตำบล', this.value);
+    });
+    $('#registform [name="amphur"]').change(function () {
+        console.log('อำเภอ', this.value);
+    });
+    $('#registform [name="province"]').change(function () {
+        console.log('จังหวัด', this.value);
+    });
+    $('#registform [name="postcode"]').change(function () {
+        console.log('รหัสไปรษณีย์', this.value);
+    });
+
+
+    $('#registform').validate({
+        rules: {
+            fname: {
+                required: true,
+                minlength: 1
+            },
+            lname: {
+                required: true,
+                minlength: 1
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            mobileno: {
+                required: true,
+                minlength: 5
+            },
+            province: {
+                required: true,
+                minlength: 1
+            },
+            district: {
+                required: true,
+                minlength: 1
+            },
+            amphur: {
+                required: true,
+                minlength: 1
+            },
+            postcode: {
+                required: true,
+                minlength: 1
+            }
+        },
+        messages: {
+            fname: "ใส่ ชื่อ ของคุณ",
+            lname: "ใส่ นามสกุล ของคุณ",
+            mobileno: "ใส่ เบอร์มือถือ ของคุณ",
+            province: "ใส่ จังหวัด",
+            district: "ใส่ อำเภอ",
+            amphur: "ใส่ ตำบล/แขวง",
+            postcode: "ใส่ รหัสไปรษณีย์"
+        }
+    });
+</script>
+
+
+<%- include('footer') %>

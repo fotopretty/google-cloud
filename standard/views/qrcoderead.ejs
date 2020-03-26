@@ -1,0 +1,157 @@
+<%- include('header2') %>
+<div class="container-fluid">
+    <img src="/image/linebannerreward.png" class="img-fluid">
+    <button id="myBtn" type="button" class="btn btn-primary btn-lg btn-block">refresh count</button>
+    <div id="listAll"></div>
+    <div id="listAll2"></div>
+</div>
+
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyDPtiVV3i2g72pxlmJO30barcRF3PsyWxE",
+        authDomain: "nodejs-262923.firebaseapp.com",
+        databaseURL: "https://nodejs-262923.firebaseio.com",
+        projectId: "nodejs-262923",
+        storageBucket: "nodejs-262923.appspot.com",
+        messagingSenderId: "367840627109",
+        appId: "1:367840627109:web:96e992a5e9c7e84bfe804c",
+        measurementId: "G-HNCMJTCED8"
+    };
+    // Initialize Firebase
+
+    firebase.initializeApp(firebaseConfig);
+    //firebase.analytics();
+    var dbRef = firebase.firestore();
+</script>
+
+<script>
+    function runApp() {
+        var getId = '<%- todoo %>';
+        var getUuid = '<%- uuid %>';
+        //$('#listAll').html(getUuid);
+
+
+        liff.getProfile().then(profile => {
+            let data = [];
+            let o = {};
+            let shopProfile = [];
+            let shopShow = [];
+            let html = '';
+            let htmlCount = [];
+
+            let shopRef = dbRef.collection('users');
+            //let shopInfo = shopRef.where('id', '==', shopId);
+            let checkRef = dbRef.collection('stamp');
+            let pointChk = checkRef.where('id', '==', profile.userId);
+            let queryChk = checkRef.where('id', '==', profile.userId).where('shopId', '==', getId);
+            queryChk.get().then(function (shopSnap) {
+                if (shopSnap.size == 0) {
+                    console.log('ไม่พบข้อมูล');
+                    checkRef.add({
+                        id: profile.userId,
+                        shopId: getId,
+                        timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 1,
+                        point: 1
+                    }).then(function () {
+                        //$('#listAll').html('<b>บันทึก นะ จ๊ะ</b>');
+                    }).catch(function (error) {
+                        console.error("Error writing document: ", error);
+                    });
+                } else {
+                    console.log('พบข้อมูล');
+                    shopSnap.forEach(function (doc) {
+                        //$('#listAll').html(profile.userId);
+                        var o = {
+                            point: doc.data().point + 1,
+                            timeStamp: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        checkRef.doc(doc.id).update(o);
+                    });
+                    reFresh();
+                }
+
+            }).catch(function (error) {
+                console.error("Error writing document: ", error);
+            });
+
+        });
+
+    }
+
+    function reFresh() {
+        liff.getProfile().then(profile => {
+            let shopProfile = [];
+            let html = '';
+            let htmlCount = [];
+            let checkRef = dbRef.collection('stamp');
+            let pointChk = checkRef.where('id', '==', profile.userId);
+            let shopRef = dbRef.collection('users');
+
+            pointChk.get().then(function (pointSnap) {
+                pointSnap.forEach(function (doc) {
+                    shopProfile.push({
+                        shopId: doc.data().shopId,
+                        point: doc.data().point
+                    });
+                    //$('#listAll2').html(shopProfile.length);
+
+                });
+
+                for (let i = 0; i < shopProfile.length; i++) {
+                    shopInfo(shopProfile[i].shopId,
+                        shopProfile[i].point).then(function (ohno) {
+                        htmlText = '<ul class="list-group">';
+                        for (let j = 0; j <
+                            htmlCount.length; j++) {
+                            htmlText += htmlCount[j];
+                        }
+                        htmlText += '</ul>';
+                        listAll2.innerHTML = htmlText;
+                    });
+                };
+            });
+
+
+            const shopInfo = (id, point) => {
+                return shopRef.where('id', '==', id).get().then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        let lineData = doc.data();
+                        html =
+                            '<li class="list-group-item container"><img class="img-left" width="50px" src="' +
+                            lineData.pictureurl + '"><div class="bottom-left">' + point +
+                            '</div><div class="top-left">' + lineData.user + '</div></li>';
+                        htmlCount.push(html);
+                        console.log(lineData.pictureurl + " point " + point);
+                    });
+
+                });
+
+            };
+
+        });
+    }
+
+    document.getElementById("myBtn").addEventListener("click", function () {
+        reFresh();
+
+    });
+
+    liff.init({
+        liffId: "1653797799-4Vpzp5rk"
+    }, () => {
+        if (liff.isInClient()) {
+            runApp()
+        } else {
+            if (liff.isLoggedIn()) {
+                runApp()
+            } else {
+                liff.login();
+            }
+        }
+    }, err => console.error(err.code, error.message));
+</script>
+
+<%- include('footer') %>

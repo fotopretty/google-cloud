@@ -1,0 +1,177 @@
+<%- include('header2') %>
+<div class="container-fluid">
+    <img src="/image/linebannerreward.png" class="img-fluid">
+    <button id="myBtn" type="button" class="btn btn-primary btn-lg btn-block">refresh count</button>
+    <div id="listAll"></div>
+</div>
+
+
+
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyDPtiVV3i2g72pxlmJO30barcRF3PsyWxE",
+        authDomain: "nodejs-262923.firebaseapp.com",
+        databaseURL: "https://nodejs-262923.firebaseio.com",
+        projectId: "nodejs-262923",
+        storageBucket: "nodejs-262923.appspot.com",
+        messagingSenderId: "367840627109",
+        appId: "1:367840627109:web:96e992a5e9c7e84bfe804c",
+        measurementId: "G-HNCMJTCED8"
+    };
+    // Initialize Firebase
+
+    firebase.initializeApp(firebaseConfig);
+    //firebase.analytics();
+    var dbRef = firebase.firestore();
+</script>
+
+<script>
+    function runApp() {
+       
+        /* liff.getProfile().then(profile => {
+                             const docRef = db.collection('users');
+                              let tempSnapshot = [];
+                              var listall = document.getElementById('listAll');
+
+                              let dbRef = db.collection('users').where('shop', "==", 1);
+                              let dbPromise = dbRef.get();
+
+                              let html = '';
+                              let htmlCount = [];
+                              let htmlTemp = '';
+                              let htmlData = [];
+                              const htmlFinish = dbPromise.then(snapshot => {
+                                  const shopCount = (id, user, html, pictureUrl) => {
+                                      return db.collection('stamp').where('shopId', '==', id).where('id', '==',
+                                              profile.userId)
+                                          .get()
+                                          .then(userShot => {
+                                              if (userShot.size == 'undefined') {
+                                                  console.log('no size');
+                                              } else {
+                                                  counTer = userShot.size;
+                                                  //console.log(counTer);
+                                                  html =
+                                                      '<li class="list-group-item container"><img class="img-left" width="50px" src="' +
+                                                      pictureUrl + '"><div class="bottom-left">' + counTer +
+                                                      '</div><div class="top-left">' + user + '</div></li>';
+                                                  //console.log(html);
+                                                  htmlCount.push(html);
+
+                                              }
+
+                                          })
+                                          .catch(e => {
+                                              return console.log(e);
+                                          });
+
+                                  };
+
+                                  snapshot.forEach(doc => {
+                                      let counTer = 0;
+                                      if (doc.data().length == 0) {
+                                          console.log('no object data');
+
+                                      } else {
+                                          let id = doc.data().id;
+                                          let user = doc.data().user;
+                                          let pictureUrl = doc.data().pictureurl;
+                                          let htmlText = '';
+                                          shopCount(id, user, html, pictureUrl).then(() => {
+                                              htmlText = '<ul class="list-group">';
+                                              for (let i = 0; i < htmlCount.length; i++) {
+                                                  htmlText += htmlCount[i];
+
+                                              }
+                                              htmlText += '</ul>';
+                                              listall.innerHTML = htmlText;
+
+                                          });
+
+                                      }
+
+                                  });
+
+                              });
+
+              });*/
+    };
+
+
+
+    function reFresh() {
+        liff.getProfile().then(profile => {
+            let shopProfile = [];
+            let html = '';
+            let htmlCount = [];
+            let checkRef = dbRef.collection('stamp');
+            let pointChk = checkRef.where('id', '==', profile.userId);
+            let shopRef = dbRef.collection('users');
+
+            pointChk.get().then(function (pointSnap) {
+                pointSnap.forEach(function (doc) {
+                    shopProfile.push({
+                        shopId: doc.data().shopId,
+                        point: doc.data().point
+                    });
+                    //$('#listAll2').html(shopProfile.length);
+
+                });
+
+                for (let i = 0; i < shopProfile.length; i++) {
+                    shopInfo(shopProfile[i].shopId, shopProfile[i].point).then(function (
+                        ohno) {
+                        htmlText = '<ul class="list-group">';
+                        for (let j = 0; j < htmlCount.length; j++) {
+                            htmlText += htmlCount[j];
+                        }
+                        htmlText += '</ul>';
+                        listAll.innerHTML = htmlText;
+                    });
+                };
+            });
+            const shopInfo = (id, point) => {
+                return shopRef.where('id', '==', id).get().then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        let lineData = doc.data();
+                        html =
+                            '<li class="list-group-item container"><img class="img-left" width="50px" src="' +
+                            lineData.pictureurl +
+                            '"><div class="bottom-left">' + point +
+                            '</div><div class="top-left">' + lineData.user +
+                            '</div></li>';
+                        htmlCount.push(html);
+                        console.log(lineData.pictureurl + " point " + point);
+                    });
+
+                });
+
+            };
+
+        });
+    }
+
+    document.getElementById("myBtn").addEventListener("click", function () {
+        reFresh();
+
+    });
+
+    liff.init({
+        liffId: "1653797799-bDV3V6an"
+    }, () => {
+        if (liff.isInClient()) {
+            //runApp()
+            reFresh();
+        } else {
+            if (liff.isLoggedIn()) {
+                reFresh()
+            } else {
+                liff.login();
+            }
+        }
+    });
+</script>
+
+<%- include('footer') %>

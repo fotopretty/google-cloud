@@ -1,0 +1,15 @@
+<%- include('header') %>
+<table width="20%">
+    <tr>
+        <td width="10">Province ID</td>
+        <td width="30%">Province Name</td>
+    </tr>
+    <% todos.forEach(items =>{ %>
+    <tr>
+        <td><%= items.province_id %></td>
+        <td><%= items.province_name %></td>
+    </tr>
+    <% }); %>
+</table>
+
+<%- include('footer') %>

@@ -1,0 +1,80 @@
+<%- include('header2') %>
+<div class="container-fluid">
+    <img src="/image/linebannerreward.png" class="img-fluid">
+    <button id="myBtn" type="button" class="btn btn-primary btn-lg btn-block">refresh count</button>
+    <div id="listAll">ssss</div>
+</div>
+
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyDPtiVV3i2g72pxlmJO30barcRF3PsyWxE",
+        authDomain: "nodejs-262923.firebaseapp.com",
+        databaseURL: "https://nodejs-262923.firebaseio.com",
+        projectId: "nodejs-262923",
+        storageBucket: "nodejs-262923.appspot.com",
+        messagingSenderId: "367840627109",
+        appId: "1:367840627109:web:96e992a5e9c7e84bfe804c",
+        measurementId: "G-HNCMJTCED8"
+    };
+    // Initialize Firebase
+
+    firebase.initializeApp(firebaseConfig);
+    //firebase.analytics();
+    var dbRef = firebase.firestore();
+</script>
+
+
+
+
+
+
+<script>
+    function runApp() {
+        var getId = '<%- todoo %>';
+        $('#listAll').html('<b>ใช้แล้ว</b>');
+
+        liff.getProfile().then(profile => {
+            const docRef = dbRef.collection('users');
+            var tempSnapshot = [];
+            var query = docRef.where("id", "==", getId);
+            query.get().then(function (arraySnap) {
+                arraySnap.forEach(function (doc) {
+                    if (doc.exists) {
+                        console.log(doc.id, "=> ", doc.data());
+                        tempSnapshot.push(doc.data());
+                        $('#listAll').html('<b>ใช้แล้ว</b>');
+                    }
+                });
+
+            }).catch(function (error) {
+                console.log("Got an error: ", error);
+            });
+
+            dbRef.collection('oldtown').add({
+            //timeStamp: dbRef.FieldValue.serverTimestamp(),
+            status: 1
+            });
+   
+        });
+    };
+
+
+
+    liff.init({
+        liffId: "1653797799-4Vpzp5rk"
+    }, () => {
+        if (liff.isInClient()) {
+            runApp()
+        } else {
+            if (liff.isLoggedIn()) {
+                runApp()
+            } else {
+                liff.login();
+            }
+        }
+    }, err => console.error(err.code, error.message));
+</script>
+
+<%- include('footer') %>

@@ -1,0 +1,29 @@
+<%- include('header') %>
+<div class="table-responsive text-nowrap">
+<table class="table table-hover">
+    <thead class="black white-text">
+        <tr>
+            <td scope="col" width="20%">ชื่อ</td>
+            <td scope="col" width="30%">นามสกุล</td>
+            <td scope="col" width="20%">Email</td width="10%">
+            <td scope="col" width="10%">มือถือ</td width="10%">
+            <td scope="col" width="20%">LINE ID</td width="10%">
+        </tr>
+    </thead>
+    <tbody>
+        <% todos.forEach(items =>{ %>
+
+        <tr>
+            <th scope="row"><%= items.first %></th>
+            <td><%= items.last %></td>
+            <td><%= items.email %></td>
+            <td><%= items.mobilenumber %></td>
+            <td><%= items.id %></td>
+        </tr>
+
+
+        <% }); %>
+    </tbody>
+</table>
+</div>
+<%- include('footer') %>
