@@ -22,7 +22,7 @@
     "crypto-js": "^4.0.0",
     "ejs": "^3.0.1",
     "express": "^4.16.3",
-    "firebase-admin": "^8.9.1",
+    "firebase-admin": "^11.4.1",
     "qrcode": "^1.4.4",
     "request": "^2.88.0",
     "save": "^2.4.0",
